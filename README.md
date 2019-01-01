@@ -1,4 +1,8 @@
-# EcobeeToInflux
+# Ecobee
+Modification of EcobeeToInflux repo to make it more modular and feed data to Azure Log Analytics (eventually)
+
+
+# EcobeeToInflux (forked)
 Powershell code for communicating with the Ecobee API to retrieve metrics, and then feed it to InfluxDB
 
 You'll need to [sign up with Ecobee as a developer](https://www.ecobee.com/home/developer/api/introduction/index.shtml), create an app wich any name you like, then copy your new API key and paste it into the $api variable in the script.
