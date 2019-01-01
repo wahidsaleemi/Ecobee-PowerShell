@@ -12,14 +12,14 @@ function Get-EcobeePIN {
 
     if (!$apiKey) { Write-Error "No API Key found!"; exit; }
     $url = "https://api.ecobee.com/authorize?response_type=ecobeePin&client_id="+ $apiKey + "&scope=smartWrite"
-
-    $Result = Invoke-RestMethod -Method GET -Uri $url
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $Result = Invoke-RestMethod -Method Get -Uri $url
     
     # User takes the PIN from this and adds it to "My Apps"
     $Result
 }
 
-# Obtain Access Token. Use this function just after the user adds thie app
+# Obtain Access Token. Use this function just after the user adds the app
 function Get-EcobeeFirstToken {
     Param(
         [Parameter(Mandatory=$true)]
@@ -27,12 +27,15 @@ function Get-EcobeeFirstToken {
         [Parameter(Mandatory=$true)]
         [string]$apikey
     )
-
     $url = "https://api.ecobee.com/token"
     $data = "grant_type=ecobeePin&code=" + $authCode + "&client_id=" + $apiKey
-
-    $Result = Invoke-RestMethod -Method POST -Uri $url -Body $data
-
+    try {
+        $Result = Invoke-RestMethod -Method POST -Uri $url -Body $data
+    }
+    catch {
+        $Error[0]
+        break;
+    }
     $Result
 }
 
@@ -58,7 +61,7 @@ function Save-EcobeeTokens {
     Param(
         [psobject]$Tokens
     )
-
+    
     # Validate $Tokens
     if (!($Tokens.refresh_token)) { write-error "No refresh token found! Not saving!"; exit; }
 
@@ -94,7 +97,11 @@ Represents the time slot at 7:55pm on December 31, 2014 thermostat time. The hea
 The outside temperature was 17.6℉ and the average indoor temperature was 69.4℉.
 #>
 function Get-EcobeeSummary {
-    if (!$accessToken) { Write-Error "No Access Token!"; exit; }
+    Param(
+        [Parameter(Mandatory=$true)]
+        [String]$AccessToken
+    )
+    if (!$accessToken) { Write-Error "No Access Token!"; break; }
 
     $url = 'https://api.ecobee.com/1/thermostatSummary?format=json&body={"selection":{"selectionType":"registered","selectionMatch":"","includeRuntime":true,"includeSensors":true,"includeSettings":true,"includeAlerts":true,"includeEvents":true,"includeEquipmentStatus":true,"includeWeather":true,"includeElectricity":true}}'
     $header = "Bearer $accessToken"
