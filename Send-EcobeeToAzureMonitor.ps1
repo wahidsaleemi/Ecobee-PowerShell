@@ -1,9 +1,60 @@
+<#
+.SYNOPSIS
+
+Gathers details from an ecobee thermostat and sends the data to Azure Monitor (Log Analytics).
+
+.DESCRIPTION
+
+The Send-EcobeeToAzureMonitor.ps1 gathers details from an ecobee thermostat and sends the data to Azure Monitor (Log Analytics).
+It should be setup to run on a schedule. The ecobee documentation can be found on https://www.ecobee.com/home/developer/api/documentation
+
+.PARAMETER apiKey
+Specifies the ecobee application key. If you don't have an application key, create one from the ecobee portal.
+
+.PARAMETER workspaceId
+Specifies the Azure Log Analytics Workspace ID.
+
+.PARAMETER workspaceKey
+Specifies the Azure Log Analytics Workspace Key.
+
+.PARAMETER tokenFile
+Specifies the path to the token file (xml). If one doesn't exist, it will be created as long as the script has permissions to the script's folder.
+
+.PARAMETER logType
+Specifies the name of the Azure Log Analytics custom log table. This name with a "_CL" appended will be created after the first time logs are sent.
+It can take up to an hour for the tables to be initially created.
+
+.INPUTS
+
+None. You cannot pipe objects to Send-EcobeeToAzureMonitor.ps1.
+
+.OUTPUTS
+
+None. Send-EcobeeToAzureMonitor.ps1 does not generate any output.
+
+.EXAMPLE
+
+C:\PS> .\Send-EcobeeToAzureMonitor.ps1 -apiKey Mmmkay -workspaceId eeeeeeee-1234-1234-1234-abcdef012345 -workspaceKey k1234567890Q==
+
+.EXAMPLE
+
+C:\PS> while ($true) {.\Send-EcobeeToAzureMonitor.ps1 -apiKey Mmmkay -workspaceId eeeeeeee-1234-1234-1234-abcdef012345 -workspaceKey k1234567890Q==; Start-Sleep -Seconds 900;}
+
+.EXAMPLE
+
+C:\PS> .\Send-EcobeeToAzureMonitor.ps1 -apiKey Mmmkay -workspaceId eeeeeeee-1234-1234-1234-abcdef012345 -workspaceKey k1234567890Q== -tokenFile C:\temp\ecobee.xml
+#>
+
 [CmdletBinding()]
 Param(
+    [Parameter(Mandatory=$true)]
+    [String]$apiKey,
+    [Parameter(Mandatory=$true)]
+    [String]$workspaceId,
+    [Parameter(Mandatory=$true)]
+    [String]$workspaceKey,
     $TokenFile = "$Script:PSScriptRoot\Ecobee.xml", # File to save the tokens
-    $logType = "ecobee",
-    $workspaceId = "",
-    $workspaceKey = ""
+    $logType = "ecobee"
 )
 #Requires -Modules OMSIngestionAPI
 
@@ -21,7 +72,6 @@ else { $Tokens = Import-Clixml -Path $TokenFile }
 #Check for expired token
 if ($Tokens.expires_at -lt (Get-Date)) 
     { 
-        $apiKey = Read-Host -Prompt "Please enter the API Key from the ecobee portal"
         $Tokens = Get-EcobeeNewToken -RefreshToken $Tokens.refresh_token -apiKey $apikey
         Save-EcobeeTokens -Tokens $Tokens
 
