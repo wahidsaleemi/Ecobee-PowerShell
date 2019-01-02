@@ -19,7 +19,7 @@ if (!(Test-path $TokenFile) -or !(Import-Clixml -Path $TokenFile).refresh_token)
 else { $Tokens = Import-Clixml -Path $TokenFile }
 
 #Check for expired token
-if ($Tokens.expiree_at -lt (Get-Date)) 
+if ($Tokens.expires_at -lt (Get-Date)) 
     { 
         $apiKey = Read-Host -Prompt "Please enter the API Key from the ecobee portal"
         $Tokens = Get-EcobeeNewToken -RefreshToken $Tokens.refresh_token -apiKey $apikey
@@ -102,3 +102,4 @@ $Timestamp = Get-Date
 $body = ConvertTo-Json $logData
 Send-OMSAPIIngestionFile -customerId $workspaceId -sharedKey $workspaceKey -body $body -logType $logType -TimeStampField $Timestamp
 #endregion
+
