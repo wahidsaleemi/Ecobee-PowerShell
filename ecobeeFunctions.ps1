@@ -63,7 +63,7 @@ function Save-EcobeeTokens {
     )
     
     # Validate $Tokens
-    if (!($Tokens.refresh_token)) { write-error "No refresh token found! Not saving!"; exit; }
+    if (!($Tokens.refresh_token)) { write-error "No refresh token found! Not saving!"; break; }
 
     # Add useful properties
     Add-Member -InputObject $Tokens -MemberType NoteProperty -Name expires_at -Value (Get-Date).AddSeconds($Tokens.expires_in) -Force

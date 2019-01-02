@@ -30,6 +30,17 @@ Get-EcobeeSummary -AccessToken $token
 
 1. Next, you will need to create an app with any name you like (such as pwsh-pin). This will give you an API Key that you can use to run the script.
 
+## Send-EcobeeToAzureMonitor.ps1
+
+You can run this on an always on computer inside a PowerShell console, like so:
+
+````PowerShell
+while ($true) {C:\Code\EcobeeToInflux\Send-EcobeeToAzureMonitor.ps1 -workspaceId 12345678-xxxx-yyyy-zzzz-123456789012 -workspaceKey aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4Q== -TokenFile
+C:\Code\EcobeeToInflux\Ecobee.xml; Start-Sleep -Seconds 900;}
+````
+
+Using task scheduler or some other means is probably better.
+
 ## EcobeeToInflux (forked)
 
 Powershell code for communicating with the Ecobee API to retrieve metrics, and then feed it to InfluxDB
