@@ -2,7 +2,8 @@
 # FUNCTIONS
 # These should be loaded from another script (. .\echobeeFunctions.ps1)
 #=========================================================================
-
+[CmdletBinding()]
+param ()
 # Obtain Pin and Auth code. The PIN is only needed to authenticate this app's API Key to a user's account.
 function Get-EcobeePIN {
     Param(
@@ -110,3 +111,12 @@ function Get-EcobeeSummary {
 
     $Result
 }
+
+Write-Verbose "Loading..."
+Write-Verbose "Get-EcobeePIN"
+Write-Verbose "Get-EcobeeFirstToken"
+Write-Verbose "Get-EcobeeNewToken"
+Write-Verbose "Save-EcobeeTokens"
+Write-Verbose "Get-EcobeeDetails"
+Write-Verbose "Get-EcobeeSummary"
+Write-Verbose ""

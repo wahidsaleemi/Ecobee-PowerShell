@@ -30,6 +30,8 @@ Or:
 Get-EcobeeSummary -AccessToken $token
 ````
 
+For more examples, see the [EXAMPLES.md](EXAMPLES.md) file.
+
 ## Send-EcobeeToAzureMonitor.ps1 Usage
 
 You can run this on an always on computer inside a PowerShell console, like so:
